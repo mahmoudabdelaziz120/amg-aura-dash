@@ -1,11 +1,10 @@
-import { useState, useMemo, useCallback, Suspense } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Thermometer, Battery, Disc, Settings, Fuel, Activity,
   TrendingUp, Timer, Shield
 } from 'lucide-react';
 import DashboardHeader from '@/components/DashboardHeader';
-import Vehicle3D from '@/components/Vehicle3D';
+import VehicleImage from '@/components/VehicleImage';
 import CircularGauge from '@/components/CircularGauge';
 import ControlSliders from '@/components/ControlSliders';
 import StatusCard from '@/components/StatusCard';
@@ -84,13 +83,7 @@ const Index = () => {
                 {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
               </span>
             </div>
-            <Suspense fallback={
-              <div className="flex items-center justify-center h-[350px]">
-                <div className="text-neon font-display text-sm animate-neon-pulse">Loading 3D Model...</div>
-              </div>
-            }>
-              <Vehicle3D healthScore={healthScore} speed={params.speed} engineLoad={params.engineLoad} />
-            </Suspense>
+            <VehicleImage healthScore={healthScore} />
           </div>
 
           {/* Main Gauges */}
@@ -184,16 +177,11 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <motion.footer
-          className="text-center py-4 border-t border-border"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
+        <footer className="text-center py-4 border-t border-border">
           <span className="text-[10px] font-display uppercase tracking-[0.3em] text-muted-foreground">
             AMG Predictive AI Dashboard • Real-Time Telemetry System
           </span>
-        </motion.footer>
+        </footer>
       </div>
     </div>
   );
