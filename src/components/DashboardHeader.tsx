@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Activity, Gauge, Zap } from 'lucide-react';
 
 interface DashboardHeaderProps {
@@ -33,18 +32,17 @@ export default function DashboardHeader({ mode, onToggleMode, healthScore }: Das
           </span>
         </div>
 
-        <motion.button
+        <button
           onClick={onToggleMode}
           className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
             mode === 'racing'
               ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
               : 'bg-primary/10 border-primary/30 text-primary glow-neon'
           }`}
-          whileTap={{ scale: 0.95 }}
         >
           <Zap className="w-3.5 h-3.5" />
           {mode === 'racing' ? 'Racing' : 'Normal'}
-        </motion.button>
+        </button>
       </div>
     </header>
   );
