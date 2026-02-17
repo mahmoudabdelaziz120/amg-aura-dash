@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import {
-  Thermometer, Battery, Disc, Settings, Fuel, Activity,
-  TrendingUp, Timer, Shield
+  Thermometer, Battery, Disc, Fuel, Activity,
+  Shield
 } from 'lucide-react';
 import DashboardHeader from '@/components/DashboardHeader';
 import VehicleImage from '@/components/VehicleImage';
@@ -10,6 +10,10 @@ import ControlSliders from '@/components/ControlSliders';
 import StatusCard from '@/components/StatusCard';
 import AlertsPanel from '@/components/AlertsPanel';
 import ProgressBar from '@/components/ProgressBar';
+import DriverMetrics from '@/components/DriverMetrics';
+import AVDCComparison from '@/components/AVDCComparison';
+import CorneringDynamics from '@/components/CorneringDynamics';
+import TrackMap from '@/components/TrackMap';
 
 const Index = () => {
   const [mode, setMode] = useState<'normal' | 'racing'>('normal');
@@ -70,45 +74,50 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <DashboardHeader mode={mode} onToggleMode={() => setMode(m => m === 'normal' ? 'racing' : 'normal')} healthScore={healthScore} />
 
-      <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
-        {/* Top Row: 3D Vehicle + Gauges */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-          {/* 3D Vehicle */}
-          <div className="lg:col-span-2 amg-panel min-h-[400px]">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground">Vehicle Overview</h2>
-              <span className={`text-xs font-display px-2 py-0.5 rounded border ${
-                mode === 'racing' ? 'text-destructive border-destructive/30 bg-destructive/5' : 'text-neon border-primary/30 bg-primary/5'
-              }`}>
-                {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
-              </span>
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
+
+        {/* Row 1: Driver Metrics | Vehicle + Gauges | AVDC Comparison */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5">
+          {/* Driver Metrics - Left */}
+          <DriverMetrics speed={params.speed} healthScore={healthScore} />
+
+          {/* Vehicle + Gauges - Center */}
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <div className="amg-panel min-h-[320px]">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground">Vehicle Overview</h2>
+                <span className={`text-xs font-display px-2 py-0.5 rounded border ${
+                  mode === 'racing' ? 'text-destructive border-destructive/30 bg-destructive/5' : 'text-neon border-primary/30 bg-primary/5'
+                }`}>
+                  {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
+                </span>
+              </div>
+              <VehicleImage healthScore={healthScore} />
             </div>
-            <VehicleImage healthScore={healthScore} />
+            {/* Gauges row */}
+            <div className="amg-panel flex items-center justify-around gap-4 py-4">
+              <CircularGauge value={params.speed} max={280} label="Speed" unit="km/h" color="neon" size={120} />
+              <CircularGauge value={rpm} max={9000} label="RPM" unit="rpm" color={rpm > 7500 ? 'red' : 'neon'} size={100} />
+              <CircularGauge value={gear} max={8} label="Gear" unit="G" color="neon" size={90} />
+              <div className="flex flex-col items-center gap-3">
+                <div className="text-center">
+                  <span className="font-display text-xl font-bold text-foreground">{acceleration}</span>
+                  <span className="text-[10px] text-muted-foreground font-body block">0-100 sec</span>
+                </div>
+                <div className="text-center">
+                  <span className={`font-display text-xl font-bold ${healthScore > 70 ? 'text-success' : healthScore > 40 ? 'text-warning' : 'text-destructive'}`}>{healthScore}%</span>
+                  <span className="text-[10px] text-muted-foreground font-body block">Health</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Main Gauges */}
-          <div className="amg-panel flex flex-col items-center justify-center gap-6">
-            <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground self-start">Performance</h2>
-            <CircularGauge value={params.speed} max={280} label="Speed" unit="km/h" color="neon" size={160} />
-            <div className="flex gap-6">
-              <CircularGauge value={rpm} max={9000} label="RPM" unit="rpm" color={rpm > 7500 ? 'red' : 'neon'} size={100} />
-              <CircularGauge value={gear} max={8} label="Gear" unit="G" color="neon" size={100} />
-            </div>
-            <div className="flex gap-6">
-              <div className="text-center">
-                <span className="font-display text-xl font-bold text-foreground">{acceleration}</span>
-                <span className="text-xs text-muted-foreground font-body block">0-100 sec</span>
-              </div>
-              <div className="text-center">
-                <span className={`font-display text-xl font-bold ${healthScore > 70 ? 'text-success' : healthScore > 40 ? 'text-warning' : 'text-destructive'}`}>{healthScore}%</span>
-                <span className="text-xs text-muted-foreground font-body block">Health</span>
-              </div>
-            </div>
-          </div>
+          {/* AVDC Comparison - Right */}
+          <AVDCComparison speed={params.speed} aggressiveness={params.aggressiveness} engineLoad={params.engineLoad} temperature={params.temperature} />
         </div>
 
-        {/* Middle Row: Controls + Status */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Row 2: Status Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatusCard title="Failure Prob." value={`${failureProbability}%`} icon={Shield}
             status={failureProbability > 60 ? 'critical' : failureProbability > 30 ? 'warning' : 'good'}
             subtitle={`RUL: ${remainingLife} km`} />
@@ -120,8 +129,8 @@ const Index = () => {
             icon={Activity} status={params.engineLoad > 80 ? 'warning' : 'good'} subtitle="Structural integrity OK" />
         </div>
 
-        {/* Bottom Row: Sliders + Details + Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+        {/* Row 3: Controls | Details | Cornering + Alerts */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
           {/* Control Sliders */}
           <ControlSliders sliders={sliders} onChange={handleSliderChange} />
 
@@ -147,34 +156,15 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Alerts */}
+          {/* Cornering + Alerts */}
           <div className="space-y-4">
+            <CorneringDynamics speed={params.speed} aggressiveness={params.aggressiveness} />
             <AlertsPanel alerts={alerts} />
-            <div className="amg-panel space-y-3">
-              <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <TrendingUp className="w-3 h-3" /> Telemetry
-              </h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-2 rounded bg-secondary border border-border">
-                  <span className="text-lg font-display font-bold text-foreground">{(params.speed * 0.36 + 45).toFixed(0)}</span>
-                  <span className="text-[10px] font-body text-muted-foreground block">Sector 1 (s)</span>
-                </div>
-                <div className="text-center p-2 rounded bg-secondary border border-border">
-                  <span className="text-lg font-display font-bold text-foreground">{(params.speed * 0.28 + 38).toFixed(0)}</span>
-                  <span className="text-[10px] font-body text-muted-foreground block">Sector 2 (s)</span>
-                </div>
-                <div className="text-center p-2 rounded bg-secondary border border-border">
-                  <span className="text-lg font-display font-bold text-neon">{(params.speed * 0.65 + 80).toFixed(0)}</span>
-                  <span className="text-[10px] font-body text-muted-foreground block">Lap Time (s)</span>
-                </div>
-                <div className="text-center p-2 rounded bg-secondary border border-border">
-                  <span className="text-lg font-display font-bold text-foreground">{Math.round(params.speed * 0.85 + params.aggressiveness * 0.3)}</span>
-                  <span className="text-[10px] font-body text-muted-foreground block">Power (kW)</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
+
+        {/* Row 4: Track Map - Full Width Panoramic */}
+        <TrackMap speed={params.speed} aggressiveness={params.aggressiveness} />
 
         {/* Footer */}
         <footer className="text-center py-4 border-t border-border">
