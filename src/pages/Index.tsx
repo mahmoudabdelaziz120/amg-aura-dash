@@ -1,9 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import {
-  Thermometer, Battery, Disc, Fuel, Activity,
-  Shield
+  Thermometer, Battery, Disc, Fuel, Activity, Shield
 } from 'lucide-react';
-import DashboardHeader from '@/components/DashboardHeader';
 import VehicleImage from '@/components/VehicleImage';
 import CircularGauge from '@/components/CircularGauge';
 import ControlSliders from '@/components/ControlSliders';
@@ -71,108 +69,105 @@ const Index = () => {
   )), [params]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader mode={mode} onToggleMode={() => setMode(m => m === 'normal' ? 'racing' : 'normal')} healthScore={healthScore} />
-
-      <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
-
-        {/* Row 1: Driver Metrics | Vehicle + Gauges | AVDC Comparison */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5">
-          {/* Driver Metrics - Left */}
-          <DriverMetrics speed={params.speed} healthScore={healthScore} />
-
-          {/* Vehicle + Gauges - Center */}
-          <div className="lg:col-span-2 flex flex-col gap-4">
-            <div className="amg-panel min-h-[320px]">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground">Vehicle Overview</h2>
-                <span className={`text-xs font-display px-2 py-0.5 rounded border ${
-                  mode === 'racing' ? 'text-destructive border-destructive/30 bg-destructive/5' : 'text-neon border-primary/30 bg-primary/5'
-                }`}>
-                  {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
-                </span>
-              </div>
-              <VehicleImage healthScore={healthScore} />
-            </div>
-            {/* Gauges row */}
-            <div className="amg-panel flex items-center justify-around gap-4 py-4">
-              <CircularGauge value={params.speed} max={280} label="Speed" unit="km/h" color="neon" size={120} />
-              <CircularGauge value={rpm} max={9000} label="RPM" unit="rpm" color={rpm > 7500 ? 'red' : 'neon'} size={100} />
-              <CircularGauge value={gear} max={8} label="Gear" unit="G" color="neon" size={90} />
-              <div className="flex flex-col items-center gap-3">
-                <div className="text-center">
-                  <span className="font-display text-xl font-bold text-foreground">{acceleration}</span>
-                  <span className="text-[10px] text-muted-foreground font-body block">0-100 sec</span>
-                </div>
-                <div className="text-center">
-                  <span className={`font-display text-xl font-bold ${healthScore > 70 ? 'text-success' : healthScore > 40 ? 'text-warning' : 'text-destructive'}`}>{healthScore}%</span>
-                  <span className="text-[10px] text-muted-foreground font-body block">Health</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* AVDC Comparison - Right */}
-          <AVDCComparison speed={params.speed} aggressiveness={params.aggressiveness} engineLoad={params.engineLoad} temperature={params.temperature} />
-        </div>
-
-        {/* Row 2: Status Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatusCard title="Failure Prob." value={`${failureProbability}%`} icon={Shield}
-            status={failureProbability > 60 ? 'critical' : failureProbability > 30 ? 'warning' : 'good'}
-            subtitle={`RUL: ${remainingLife} km`} />
-          <StatusCard title="Brake Wear" value={Math.min(100, Math.round(params.tireWear * 0.8 + params.aggressiveness * 0.2))} unit="%"
-            icon={Disc} status={params.tireWear > 70 ? 'critical' : params.tireWear > 40 ? 'warning' : 'good'} subtitle="Friction pads monitored" />
-          <StatusCard title="Oil Pressure" value={(3.5 - params.engineLoad * 0.02).toFixed(1)} unit="bar"
-            icon={Fuel} status={params.engineLoad > 85 ? 'warning' : 'good'} subtitle="Within operating range" />
-          <StatusCard title="Vibration" value={(params.engineLoad * 0.05 + params.speed * 0.01).toFixed(1)} unit="mm/s"
-            icon={Activity} status={params.engineLoad > 80 ? 'warning' : 'good'} subtitle="Structural integrity OK" />
-        </div>
-
-        {/* Row 3: Controls | Details | Cornering + Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
-          {/* Control Sliders */}
-          <ControlSliders sliders={sliders} onChange={handleSliderChange} />
-
-          {/* Tire & Energy Details */}
-          <div className="space-y-4">
-            <div className="amg-panel space-y-3">
-              <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Thermometer className="w-3 h-3" /> Tire & Grip
-              </h3>
-              <ProgressBar label="Front Left Temp" value={params.temperature - 5} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
-              <ProgressBar label="Front Right Temp" value={params.temperature - 3} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
-              <ProgressBar label="Rear Left Temp" value={params.temperature + 2} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
-              <ProgressBar label="Rear Right Temp" value={params.temperature} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
-              <ProgressBar label="Grip Level" value={Math.max(20, 100 - params.tireWear - (params.temperature > 100 ? 15 : 0))} max={100} color="success" />
-            </div>
-            <div className="amg-panel space-y-3">
-              <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Battery className="w-3 h-3" /> Energy & Battery
-              </h3>
-              <ProgressBar label="Battery Health" value={params.battery} max={100} color={params.battery < 30 ? 'red' : 'success'} />
-              <ProgressBar label="Energy Efficiency" value={Math.max(20, 100 - params.aggressiveness * 0.5 - params.speed * 0.1)} max={100} color="neon" />
-              <ProgressBar label="Est. Range" value={Math.max(0, params.battery * 4 - params.speed * 0.5)} max={400} color="neon" unit=" km" />
-            </div>
-          </div>
-
-          {/* Cornering + Alerts */}
-          <div className="space-y-4">
-            <CorneringDynamics speed={params.speed} aggressiveness={params.aggressiveness} />
-            <AlertsPanel alerts={alerts} />
-          </div>
-        </div>
-
-        {/* Row 4: Track Map - Full Width Panoramic */}
-        <TrackMap speed={params.speed} aggressiveness={params.aggressiveness} />
-
-        {/* Footer */}
-        <footer className="text-center py-4 border-t border-border">
-          <span className="text-[10px] font-display uppercase tracking-[0.3em] text-muted-foreground">
-            AMG Predictive AI Dashboard • Real-Time Telemetry System
-          </span>
-        </footer>
+    <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
+      {/* Mode toggle */}
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-lg font-bold text-foreground">
+          Main Dashboard
+        </h2>
+        <button
+          onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
+            mode === 'racing'
+              ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
+              : 'bg-primary/10 border-primary/30 text-primary glow-neon'
+          }`}
+        >
+          {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
+        </button>
       </div>
+
+      {/* Row 1: Driver Metrics | Vehicle + Gauges | AVDC Comparison */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5">
+        <DriverMetrics speed={params.speed} healthScore={healthScore} />
+
+        <div className="lg:col-span-2 flex flex-col gap-4">
+          <div className="amg-panel min-h-[320px]">
+            <h2 className="font-display text-xs uppercase tracking-widest text-muted-foreground mb-2">Vehicle Overview</h2>
+            <VehicleImage healthScore={healthScore} />
+          </div>
+          <div className="amg-panel flex items-center justify-around gap-4 py-4">
+            <CircularGauge value={params.speed} max={280} label="Speed" unit="km/h" color="neon" size={120} />
+            <CircularGauge value={rpm} max={9000} label="RPM" unit="rpm" color={rpm > 7500 ? 'red' : 'neon'} size={100} />
+            <CircularGauge value={gear} max={8} label="Gear" unit="G" color="neon" size={90} />
+            <div className="flex flex-col items-center gap-3">
+              <div className="text-center">
+                <span className="font-display text-xl font-bold text-foreground">{acceleration}</span>
+                <span className="text-[10px] text-muted-foreground font-body block">0-100 sec</span>
+              </div>
+              <div className="text-center">
+                <span className={`font-display text-xl font-bold ${healthScore > 70 ? 'text-success' : healthScore > 40 ? 'text-warning' : 'text-destructive'}`}>{healthScore}%</span>
+                <span className="text-[10px] text-muted-foreground font-body block">Health</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <AVDCComparison speed={params.speed} aggressiveness={params.aggressiveness} engineLoad={params.engineLoad} temperature={params.temperature} />
+      </div>
+
+      {/* Row 2: Status Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatusCard title="Failure Prob." value={`${failureProbability}%`} icon={Shield}
+          status={failureProbability > 60 ? 'critical' : failureProbability > 30 ? 'warning' : 'good'}
+          subtitle={`RUL: ${remainingLife} km`} />
+        <StatusCard title="Brake Wear" value={Math.min(100, Math.round(params.tireWear * 0.8 + params.aggressiveness * 0.2))} unit="%"
+          icon={Disc} status={params.tireWear > 70 ? 'critical' : params.tireWear > 40 ? 'warning' : 'good'} subtitle="Friction pads monitored" />
+        <StatusCard title="Oil Pressure" value={(3.5 - params.engineLoad * 0.02).toFixed(1)} unit="bar"
+          icon={Fuel} status={params.engineLoad > 85 ? 'warning' : 'good'} subtitle="Within operating range" />
+        <StatusCard title="Vibration" value={(params.engineLoad * 0.05 + params.speed * 0.01).toFixed(1)} unit="mm/s"
+          icon={Activity} status={params.engineLoad > 80 ? 'warning' : 'good'} subtitle="Structural integrity OK" />
+      </div>
+
+      {/* Row 3: Controls | Details | Cornering + Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+        <ControlSliders sliders={sliders} onChange={handleSliderChange} />
+
+        <div className="space-y-4">
+          <div className="amg-panel space-y-3">
+            <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Thermometer className="w-3 h-3" /> Tire & Grip
+            </h3>
+            <ProgressBar label="Front Left Temp" value={params.temperature - 5} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
+            <ProgressBar label="Front Right Temp" value={params.temperature - 3} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
+            <ProgressBar label="Rear Left Temp" value={params.temperature + 2} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
+            <ProgressBar label="Rear Right Temp" value={params.temperature} max={130} color={params.temperature > 105 ? 'red' : 'warning'} unit="°C" />
+            <ProgressBar label="Grip Level" value={Math.max(20, 100 - params.tireWear - (params.temperature > 100 ? 15 : 0))} max={100} color="success" />
+          </div>
+          <div className="amg-panel space-y-3">
+            <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Battery className="w-3 h-3" /> Energy & Battery
+            </h3>
+            <ProgressBar label="Battery Health" value={params.battery} max={100} color={params.battery < 30 ? 'red' : 'success'} />
+            <ProgressBar label="Energy Efficiency" value={Math.max(20, 100 - params.aggressiveness * 0.5 - params.speed * 0.1)} max={100} color="neon" />
+            <ProgressBar label="Est. Range" value={Math.max(0, params.battery * 4 - params.speed * 0.5)} max={400} color="neon" unit=" km" />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <CorneringDynamics speed={params.speed} aggressiveness={params.aggressiveness} />
+          <AlertsPanel alerts={alerts} />
+        </div>
+      </div>
+
+      {/* Row 4: Track Map */}
+      <TrackMap speed={params.speed} aggressiveness={params.aggressiveness} />
+
+      <footer className="text-center py-4 border-t border-border">
+        <span className="text-[10px] font-display uppercase tracking-[0.3em] text-muted-foreground">
+          AMG Predictive AI Dashboard • Real-Time Telemetry System
+        </span>
+      </footer>
     </div>
   );
 };
