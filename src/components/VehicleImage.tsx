@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import amgImage from '@/assets/amg-gt-black.png';
+import f1Side from '@/assets/f1-side.png';
 
 interface VehicleImageProps {
   healthScore: number;
 }
 
 function getHaloColor(score: number): string {
-  if (score > 70) return 'shadow-[0_0_60px_rgba(0,255,100,0.3)]';
-  if (score > 40) return 'shadow-[0_0_60px_rgba(255,200,0,0.3)]';
-  return 'shadow-[0_0_60px_rgba(255,50,50,0.4)]';
+  if (score > 70) return 'shadow-[0_0_80px_rgba(0,255,100,0.25),0_0_120px_rgba(0,229,255,0.15)]';
+  if (score > 40) return 'shadow-[0_0_80px_rgba(255,200,0,0.3),0_0_120px_rgba(255,150,0,0.15)]';
+  return 'shadow-[0_0_80px_rgba(255,50,50,0.4),0_0_120px_rgba(255,0,60,0.2)]';
 }
 
 function getGlowBorder(score: number): string {
@@ -22,13 +22,13 @@ export default function VehicleImage({ healthScore }: VehicleImageProps) {
   const borderClass = useMemo(() => getGlowBorder(healthScore), [healthScore]);
 
   return (
-    <div className={`relative w-full h-full min-h-[350px] rounded-lg overflow-hidden flex items-center justify-center bg-secondary/30 border ${borderClass} ${haloClass} transition-all duration-700`}>
+    <div className={`relative w-full h-full min-h-[300px] rounded-lg overflow-hidden flex items-center justify-center bg-gradient-to-b from-secondary/20 to-background border ${borderClass} ${haloClass} transition-all duration-700`}>
       <img
-        src={amgImage}
-        alt="Mercedes AMG GT Black Series"
-        className="w-full h-full object-contain max-h-[400px] p-4"
+        src={f1Side}
+        alt="Mercedes-AMG Petronas F1 W15"
+        className="w-full h-full object-contain max-h-[350px] p-4 drop-shadow-[0_0_30px_rgba(0,229,255,0.2)]"
       />
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
     </div>
   );
 }

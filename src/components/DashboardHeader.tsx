@@ -1,4 +1,5 @@
-import { Activity, Gauge, Zap } from 'lucide-react';
+import { Activity, Zap } from 'lucide-react';
+import amgLogo from '@/assets/amg-petronas-logo.png';
 
 interface DashboardHeaderProps {
   mode: 'normal' | 'racing';
@@ -10,12 +11,7 @@ export default function DashboardHeader({ mode, onToggleMode, healthScore }: Das
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-carbon/80 backdrop-blur-md">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Gauge className="w-6 h-6 text-neon" />
-          <h1 className="font-display text-lg font-bold tracking-wider text-foreground">
-            AMG <span className="text-neon">CONTROL</span>
-          </h1>
-        </div>
+        <img src={amgLogo} alt="AMG Petronas" className="h-8 object-contain" />
         <div className="hidden sm:flex items-center gap-2 ml-4">
           <Activity className="w-3 h-3 text-success animate-neon-pulse" />
           <span className="text-xs font-body text-muted-foreground">LIVE TELEMETRY</span>
