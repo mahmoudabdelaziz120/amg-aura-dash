@@ -11,9 +11,9 @@ interface StatusCardProps {
 }
 
 const statusStyles = {
-  good: 'border-success/30 glow-success',
-  warning: 'border-warning/30 glow-warning',
-  critical: 'border-destructive/30 glow-red',
+  good: 'border-success/30 glow-success hover-glow-success',
+  warning: 'border-warning/30 glow-warning hover-glow-warning',
+  critical: 'border-destructive/30 glow-red hover-glow-critical',
 };
 
 export default function StatusCard({ title, value, unit, icon: Icon, status = 'good', subtitle }: StatusCardProps) {

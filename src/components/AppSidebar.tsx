@@ -1,6 +1,7 @@
 import {
   LayoutDashboard, BarChart3, Car, ShieldAlert, Radio,
-  Activity, Battery, Thermometer, Wrench, Gauge
+  Activity, Battery, Thermometer, Wrench, Gauge,
+  Users, Flag, Cpu, Settings, Zap, Timer
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation } from 'react-router-dom';
@@ -33,6 +34,14 @@ const systemNav = [
   { title: 'Diagnostics', url: '/diagnostics', icon: Gauge },
 ];
 
+const racingNav = [
+  { title: 'Driving Behavior', url: '/driving-behavior', icon: Zap },
+  { title: 'Drivers & Teams', url: '/drivers-teams', icon: Users },
+  { title: 'Pit Stop Analytics', url: '/pit-stop', icon: Timer },
+  { title: 'Tech Updates', url: '/tech-updates', icon: Wrench },
+  { title: 'AI Intelligence', url: '/ai-intelligence', icon: Cpu },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
@@ -48,7 +57,7 @@ export function AppSidebar() {
             className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-body text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
             activeClassName="bg-primary/10 text-primary border-l-2 border-primary"
           >
-            <item.icon className="h-4 w-4 shrink-0" />
+            <item.icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
             {!collapsed && <span>{item.title}</span>}
           </NavLink>
         </SidebarMenuButton>
@@ -78,6 +87,15 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderItems(systemNav)}</SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="font-display text-[9px] uppercase tracking-[0.2em] text-muted-foreground px-4 py-2">
+            {!collapsed && 'Racing & AI'}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>{renderItems(racingNav)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
