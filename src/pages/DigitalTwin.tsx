@@ -109,7 +109,7 @@ function Vehicle3DEmbed({ overallHealth }: { overallHealth: number }) {
         className="w-full h-full"
         frameBorder="0"
         allow="autoplay; fullscreen; xr-spatial-tracking"
-        src="https://sketchfab.com/models/aeb8ed9bd3e24741a3b06029e8454d54/embed?transparent=1&ui_theme=dark&ui_infos=0&ui_watermark_link=0&ui_watermark=0&ui_ar=0&ui_help=0&ui_settings=0&ui_inspector=0&ui_annotations=0&ui_stop=0&ui_vr=0&ui_fullscreen=0&ui_animations=0"
+        src="https://sketchfab.com/models/aeb8ed9bd3e24741a3b06029e8454d54/embed?autostart=1"
         loading="lazy"
       />
       {/* Bottom gradient fade */}
