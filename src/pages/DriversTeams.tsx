@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Award, ChevronLeft, ChevronRight, X, Gauge, ShieldCheck, AlertTriangle, Activity, Fuel, Thermometer, Flag, MapPin, User, Wrench } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
+import carMercedes from '@/assets/car-mercedes.png';
+import carFerrari from '@/assets/car-ferrari.png';
+import carMclaren from '@/assets/car-mclaren.png';
+import carRedbull from '@/assets/car-redbull.png';
+
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
 const drivers = [
@@ -92,6 +97,7 @@ const teams = [
     principal: 'Toto Wolff', car: 'W15', reliability: 94, pitSpeed: '2.3s',
     strategy: 92, wins: 8, championships: 8,
     logo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/teams/2024/mercedes-logo',
+    carImage: carMercedes,
     metrics: { aeroEff: 94, powerUnit: 96, tireManagement: 91 },
     maintenance: { nextService: '320 km', riskLevel: 'Low', prediction: 'No faults expected' },
     color: 'from-teal-500/30 to-emerald-600/10',
@@ -105,6 +111,7 @@ const teams = [
     principal: 'Christian Horner', car: 'RB20', reliability: 91, pitSpeed: '2.1s',
     strategy: 96, wins: 19, championships: 6,
     logo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/teams/2024/red-bull-racing-logo',
+    carImage: carRedbull,
     metrics: { aeroEff: 97, powerUnit: 94, tireManagement: 95 },
     maintenance: { nextService: '180 km', riskLevel: 'Medium', prediction: 'Gearbox check recommended' },
     color: 'from-blue-500/30 to-indigo-600/10',
@@ -118,6 +125,7 @@ const teams = [
     principal: 'Frédéric Vasseur', car: 'SF-24', reliability: 82, pitSpeed: '2.5s',
     strategy: 85, wins: 4, championships: 16,
     logo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/teams/2024/ferrari-logo',
+    carImage: carFerrari,
     metrics: { aeroEff: 90, powerUnit: 93, tireManagement: 84 },
     maintenance: { nextService: '90 km', riskLevel: 'High', prediction: 'Cooling system alert' },
     color: 'from-red-500/30 to-rose-600/10',
@@ -131,6 +139,7 @@ const teams = [
     principal: 'Andrea Stella', car: 'MCL38', reliability: 88, pitSpeed: '2.4s',
     strategy: 89, wins: 2, championships: 8,
     logo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/teams/2024/mclaren-logo',
+    carImage: carMclaren,
     metrics: { aeroEff: 92, powerUnit: 89, tireManagement: 90 },
     maintenance: { nextService: '250 km', riskLevel: 'Low', prediction: 'All systems nominal' },
     color: 'from-orange-500/30 to-amber-600/10',
@@ -252,11 +261,25 @@ function TeamCard({ team, index, onClick }: { team: typeof teams[0]; index: numb
       whileHover={{ scale: 1.03, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative cursor-pointer rounded-xl border ${team.border} bg-gradient-to-br ${team.color} backdrop-blur-xl overflow-hidden transition-shadow duration-500 ${team.glow} group`}
+      className={`relative cursor-pointer rounded-xl border ${team.border} bg-gradient-to-br ${team.color} backdrop-blur-xl overflow-visible transition-shadow duration-500 ${team.glow} group`}
     >
-      <div className={`absolute top-0 inset-x-0 h-[2px] ${team.bgAccent} opacity-60`} />
+      <div className={`absolute top-0 inset-x-0 h-[2px] ${team.bgAccent} opacity-60 rounded-t-xl`} />
 
-      <div className="p-5 space-y-4">
+      {/* Car image - overlapping outside the card */}
+      <div className="relative h-28 sm:h-36 mt-2 mx-2 flex items-end justify-center overflow-visible">
+        <motion.img
+          src={team.carImage}
+          alt={`${team.name} car`}
+          loading="lazy"
+          className="w-[105%] max-w-none object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.6)] relative z-10"
+          whileHover={{ scale: 1.08, x: 8 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+        />
+        {/* Reflection */}
+        <div className="absolute bottom-0 inset-x-0 h-8 bg-gradient-to-t from-background/40 to-transparent blur-sm" />
+      </div>
+
+      <div className="p-5 pt-3 space-y-4">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-sm font-display font-bold text-foreground">{team.name}</h3>
@@ -436,6 +459,10 @@ function TeamModal({ team, onPrev, onNext, onClose }: {
             <div className={`text-5xl font-display font-black ${team.accent}`}>{team.championships}</div>
             <span className="text-[10px] font-display tracking-[0.2em] text-muted-foreground">TITLES</span>
           </div>
+        </div>
+        {/* Car image in modal */}
+        <div className="mt-4 -mx-2 -mb-2">
+          <img src={team.carImage} alt={`${team.name} car`} className="w-full object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)]" loading="lazy" />
         </div>
       </div>
 
