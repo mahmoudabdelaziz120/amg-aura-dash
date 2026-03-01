@@ -8,6 +8,13 @@ import carFerrari from '@/assets/car-ferrari.png';
 import carMclaren from '@/assets/car-mclaren.png';
 import carRedbull from '@/assets/car-redbull.png';
 
+import driverHamilton from '@/assets/driver-hamilton.png';
+import driverRussell from '@/assets/driver-russell.png';
+import driverVerstappen from '@/assets/driver-verstappen.png';
+import driverNorris from '@/assets/driver-norris.png';
+import driverLeclerc from '@/assets/driver-leclerc.png';
+import driverSainz from '@/assets/driver-sainz.png';
+
 // ─── Data ──────────────────────────────────────────────────────────────────────
 
 const drivers = [
@@ -15,7 +22,7 @@ const drivers = [
     id: 1, name: 'Lewis Hamilton', number: 44, team: 'Mercedes-AMG Petronas',
     nationality: 'British', style: 'Balanced', riskIndex: 22, consistency: 94,
     aggression: 35, rating: 97, reliability: 96,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/hamilton',
+    photo: driverHamilton,
     stats: { wins: 103, poles: 104, podiums: 197, championships: 7 },
     telemetry: { topSpeed: 342, avgLapTime: '1:18.3', brakingForce: 5.2, gForce: 6.1 },
     color: 'from-emerald-500/30 to-teal-600/10',
@@ -28,7 +35,7 @@ const drivers = [
     id: 2, name: 'George Russell', number: 63, team: 'Mercedes-AMG Petronas',
     nationality: 'British', style: 'Aggressive', riskIndex: 38, consistency: 88,
     aggression: 52, rating: 91, reliability: 89,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/russell',
+    photo: driverRussell,
     stats: { wins: 2, poles: 3, podiums: 15, championships: 0 },
     telemetry: { topSpeed: 338, avgLapTime: '1:18.9', brakingForce: 4.8, gForce: 5.8 },
     color: 'from-cyan-500/30 to-blue-600/10',
@@ -41,7 +48,7 @@ const drivers = [
     id: 3, name: 'Max Verstappen', number: 1, team: 'Red Bull Racing',
     nationality: 'Dutch', style: 'Aggressive', riskIndex: 30, consistency: 96,
     aggression: 60, rating: 98, reliability: 91,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/verstappen',
+    photo: driverVerstappen,
     stats: { wins: 54, poles: 32, podiums: 98, championships: 3 },
     telemetry: { topSpeed: 345, avgLapTime: '1:17.8', brakingForce: 5.5, gForce: 6.4 },
     color: 'from-blue-500/30 to-indigo-600/10',
@@ -54,7 +61,7 @@ const drivers = [
     id: 4, name: 'Lando Norris', number: 4, team: 'McLaren F1',
     nationality: 'British', style: 'Balanced', riskIndex: 25, consistency: 90,
     aggression: 42, rating: 92, reliability: 88,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/norris',
+    photo: driverNorris,
     stats: { wins: 1, poles: 5, podiums: 18, championships: 0 },
     telemetry: { topSpeed: 340, avgLapTime: '1:18.5', brakingForce: 4.9, gForce: 5.9 },
     color: 'from-orange-500/30 to-amber-600/10',
@@ -67,7 +74,7 @@ const drivers = [
     id: 5, name: 'Charles Leclerc', number: 16, team: 'Scuderia Ferrari',
     nationality: 'Monégasque', style: 'Calculated', riskIndex: 28, consistency: 87,
     aggression: 45, rating: 93, reliability: 82,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/leclerc',
+    photo: driverLeclerc,
     stats: { wins: 5, poles: 23, podiums: 30, championships: 0 },
     telemetry: { topSpeed: 343, avgLapTime: '1:18.1', brakingForce: 5.1, gForce: 6.0 },
     color: 'from-red-500/30 to-rose-600/10',
@@ -80,7 +87,7 @@ const drivers = [
     id: 6, name: 'Carlos Sainz', number: 55, team: 'Scuderia Ferrari',
     nationality: 'Spanish', style: 'Smooth', riskIndex: 18, consistency: 91,
     aggression: 30, rating: 89, reliability: 85,
-    photo: 'https://media.formula1.com/image/upload/f_auto,c_limit,q_75,w_1320/content/dam/fom-website/drivers/2024Drivers/sainz',
+    photo: driverSainz,
     stats: { wins: 3, poles: 5, podiums: 20, championships: 0 },
     telemetry: { topSpeed: 339, avgLapTime: '1:18.7', brakingForce: 4.7, gForce: 5.7 },
     color: 'from-yellow-500/30 to-amber-600/10',
@@ -211,18 +218,28 @@ function DriverCard({ driver, index, onClick }: { driver: typeof drivers[0]; ind
       <div className={`absolute top-0 inset-x-0 h-[2px] ${driver.bgAccent} opacity-60`} />
 
       <div className="p-5 space-y-4">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <span className={`text-3xl font-display font-black ${driver.accent}`}>#{driver.number}</span>
-            <h3 className="text-base font-display font-bold text-foreground mt-1">{driver.name}</h3>
-            <p className="text-[11px] text-muted-foreground font-body flex items-center gap-1">
-              <Flag className="w-3 h-3" /> {driver.nationality}
-            </p>
-          </div>
-          <div className="text-right space-y-1">
-            <div className={`text-3xl font-display font-black ${driver.accent}`}>{driver.rating}</div>
-            <span className="text-[8px] font-display tracking-[0.2em] text-muted-foreground block">OVERALL</span>
+        {/* Driver photo + Header */}
+        <div className="flex items-start gap-3">
+          <motion.img
+            src={driver.photo}
+            alt={driver.name}
+            loading="lazy"
+            className="w-16 h-16 rounded-lg object-cover object-top border border-border/40"
+            whileHover={{ scale: 1.08 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          />
+          <div className="flex-1 flex justify-between items-start">
+            <div>
+              <span className={`text-2xl font-display font-black ${driver.accent}`}>#{driver.number}</span>
+              <h3 className="text-sm font-display font-bold text-foreground mt-0.5">{driver.name}</h3>
+              <p className="text-[11px] text-muted-foreground font-body flex items-center gap-1">
+                <Flag className="w-3 h-3" /> {driver.nationality}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className={`text-2xl font-display font-black ${driver.accent}`}>{driver.rating}</div>
+              <span className="text-[8px] font-display tracking-[0.2em] text-muted-foreground block">OVERALL</span>
+            </div>
           </div>
         </div>
 
@@ -265,18 +282,17 @@ function TeamCard({ team, index, onClick }: { team: typeof teams[0]; index: numb
     >
       <div className={`absolute top-0 inset-x-0 h-[2px] ${team.bgAccent} opacity-60 rounded-t-xl`} />
 
-      {/* Car image - overlapping outside the card */}
-      <div className="relative h-28 sm:h-36 mt-2 mx-2 flex items-end justify-center overflow-visible">
+      {/* Car image - smaller */}
+      <div className="relative h-20 sm:h-24 mt-2 mx-2 flex items-end justify-center overflow-visible">
         <motion.img
           src={team.carImage}
           alt={`${team.name} car`}
           loading="lazy"
-          className="w-[105%] max-w-none object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.6)] relative z-10"
-          whileHover={{ scale: 1.08, x: 8 }}
+          className="w-[95%] max-w-none object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.5)] relative z-10"
+          whileHover={{ scale: 1.06, x: 6 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         />
-        {/* Reflection */}
-        <div className="absolute bottom-0 inset-x-0 h-8 bg-gradient-to-t from-background/40 to-transparent blur-sm" />
+        <div className="absolute bottom-0 inset-x-0 h-6 bg-gradient-to-t from-background/40 to-transparent blur-sm" />
       </div>
 
       <div className="p-5 pt-3 space-y-4">
@@ -338,19 +354,29 @@ function DriverModal({ driver, onPrev, onNext, onClose }: {
     >
       {/* Hero */}
       <div className={`relative rounded-xl overflow-hidden bg-gradient-to-br ${driver.color} border ${driver.border} p-6`}>
-        <div className="flex items-center justify-between">
-          <div>
-            <span className={`text-5xl font-display font-black ${driver.accent}`}>#{driver.number}</span>
-            <h2 className="text-2xl font-display font-bold text-foreground mt-2">{driver.name}</h2>
-            <p className="text-sm text-muted-foreground font-body mt-1">{driver.team}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <Flag className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-body text-muted-foreground">{driver.nationality}</span>
+        <div className="flex items-start gap-4">
+          <motion.img
+            src={driver.photo}
+            alt={driver.name}
+            className="w-24 h-24 rounded-xl object-cover object-top border-2 border-border/40"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+          />
+          <div className="flex-1 flex justify-between items-start">
+            <div>
+              <span className={`text-4xl font-display font-black ${driver.accent}`}>#{driver.number}</span>
+              <h2 className="text-xl font-display font-bold text-foreground mt-1">{driver.name}</h2>
+              <p className="text-sm text-muted-foreground font-body mt-1">{driver.team}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Flag className="w-3 h-3 text-muted-foreground" />
+                <span className="text-xs font-body text-muted-foreground">{driver.nationality}</span>
+              </div>
             </div>
-          </div>
-          <div className="text-right">
-            <div className={`text-6xl font-display font-black ${driver.accent}`}>{driver.rating}</div>
-            <span className="text-[10px] font-display tracking-[0.2em] text-muted-foreground">RATING</span>
+            <div className="text-right">
+              <div className={`text-5xl font-display font-black ${driver.accent}`}>{driver.rating}</div>
+              <span className="text-[10px] font-display tracking-[0.2em] text-muted-foreground">RATING</span>
+            </div>
           </div>
         </div>
       </div>
