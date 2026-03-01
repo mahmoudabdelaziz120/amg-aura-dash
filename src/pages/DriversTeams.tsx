@@ -278,21 +278,20 @@ function TeamCard({ team, index, onClick }: { team: typeof teams[0]; index: numb
       whileHover={{ scale: 1.03, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative cursor-pointer rounded-xl border ${team.border} bg-gradient-to-br ${team.color} backdrop-blur-xl overflow-visible transition-shadow duration-500 ${team.glow} group`}
+      className={`relative cursor-pointer rounded-xl border ${team.border} bg-gradient-to-br ${team.color} backdrop-blur-xl overflow-hidden transition-shadow duration-500 ${team.glow} group`}
     >
       <div className={`absolute top-0 inset-x-0 h-[2px] ${team.bgAccent} opacity-60 rounded-t-xl`} />
 
-      {/* Car image - smaller */}
-      <div className="relative h-20 sm:h-24 mt-2 mx-2 flex items-end justify-center overflow-visible">
+      {/* Car image - contained within card */}
+      <div className="relative h-24 sm:h-28 mt-3 mx-4 flex items-center justify-center overflow-hidden rounded-lg bg-background/20">
         <motion.img
           src={team.carImage}
           alt={`${team.name} car`}
           loading="lazy"
-          className="w-[95%] max-w-none object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.5)] relative z-10"
+          className="w-[90%] object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
           whileHover={{ scale: 1.06, x: 6 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         />
-        <div className="absolute bottom-0 inset-x-0 h-6 bg-gradient-to-t from-background/40 to-transparent blur-sm" />
       </div>
 
       <div className="p-5 pt-3 space-y-4">
