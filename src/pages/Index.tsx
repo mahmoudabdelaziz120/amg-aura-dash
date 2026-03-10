@@ -92,16 +92,24 @@ const Index = () => {
         <h2 className="font-display text-lg font-bold text-foreground">
           Main Dashboard
         </h2>
-        <button
-          onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
-            mode === 'racing'
-              ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
-              : 'bg-primary/10 border-primary/30 text-primary glow-neon'
-          }`}
-        >
-          {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSendData}
+            className="flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border bg-accent/10 border-accent/30 text-accent hover:bg-accent/20"
+          >
+            <Send className="w-3 h-3" /> Send Data
+          </button>
+          <button
+            onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
+              mode === 'racing'
+                ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
+                : 'bg-primary/10 border-primary/30 text-primary glow-neon'
+            }`}
+          >
+            {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
+          </button>
+        </div>
       </div>
 
       {/* Row 1: Driver Metrics | Vehicle + Gauges | AVDC Comparison */}
