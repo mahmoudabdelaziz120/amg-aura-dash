@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import {
-  Thermometer, Battery, Disc, Fuel, Activity, Shield
+  Thermometer, Battery, Disc, Fuel, Activity, Shield, Send
 } from 'lucide-react';
 import VehicleImage from '@/components/VehicleImage';
 import CircularGauge from '@/components/CircularGauge';
@@ -12,21 +12,38 @@ import DriverMetrics from '@/components/DriverMetrics';
 import AVDCComparison from '@/components/AVDCComparison';
 import CorneringDynamics from '@/components/CorneringDynamics';
 import TrackMap from '@/components/TrackMap';
+import { useSensorData, sendSensorData } from '@/hooks/useSensorData';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [mode, setMode] = useState<'normal' | 'racing'>('normal');
-  const [params, setParams] = useState({
-    aggressiveness: 30,
-    speed: 80,
-    temperature: 85,
-    tireWear: 25,
-    battery: 88,
-    engineLoad: 45,
-  });
+  const { sensorData, updateSensor } = useSensorData();
+  const { toast } = useToast();
+
+  // Map sensorData to the params shape used by existing components
+  const params = useMemo(() => ({
+    aggressiveness: sensorData.aggressiveness,
+    speed: sensorData.speed,
+    temperature: sensorData.engineTemperature,
+    tireWear: sensorData.tireWear,
+    battery: sensorData.battery,
+    engineLoad: sensorData.engineLoad,
+  }), [sensorData]);
 
   const handleSliderChange = useCallback((id: string, value: number) => {
-    setParams((prev) => ({ ...prev, [id]: value }));
-  }, []);
+    // Map slider ids to sensorData keys
+    const keyMap: Record<string, string> = { temperature: 'engineTemperature' };
+    updateSensor(keyMap[id] || id, value);
+  }, [updateSensor]);
+
+  const handleSendData = useCallback(async () => {
+    try {
+      await sendSensorData(sensorData);
+      toast({ title: 'Data sent', description: 'Sensor data sent to /Car_Info' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to send sensor data', variant: 'destructive' });
+    }
+  }, [sensorData, toast]);
 
   const healthScore = useMemo(() => {
     const tireHealth = 100 - params.tireWear;
@@ -75,16 +92,24 @@ const Index = () => {
         <h2 className="font-display text-lg font-bold text-foreground">
           Main Dashboard
         </h2>
-        <button
-          onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
-            mode === 'racing'
-              ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
-              : 'bg-primary/10 border-primary/30 text-primary glow-neon'
-          }`}
-        >
-          {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSendData}
+            className="flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border bg-accent/10 border-accent/30 text-accent hover:bg-accent/20"
+          >
+            <Send className="w-3 h-3" /> Send Data
+          </button>
+          <button
+            onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
+              mode === 'racing'
+                ? 'bg-destructive/10 border-destructive/50 text-destructive glow-red'
+                : 'bg-primary/10 border-primary/30 text-primary glow-neon'
+            }`}
+          >
+            {mode === 'racing' ? '🏁 RACE MODE' : '🛣️ NORMAL'}
+          </button>
+        </div>
       </div>
 
       {/* Row 1: Driver Metrics | Vehicle + Gauges | AVDC Comparison */}
