@@ -8,6 +8,7 @@ export interface SensorData {
   throttlePosition: number;
   fuelPressure: number;
   intakeManifoldPressure: number;
+  airIntakeTemp: number;
   tireWear: number;
   battery: number;
   engineLoad: number;
@@ -24,6 +25,7 @@ const defaultSensorData: SensorData = {
   throttlePosition: 30,
   fuelPressure: 3.5,
   intakeManifoldPressure: 1.0,
+  airIntakeTemp: 30,
   tireWear: 25,
   battery: 88,
   engineLoad: 45,
