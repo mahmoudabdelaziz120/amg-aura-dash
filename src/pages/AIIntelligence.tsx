@@ -8,6 +8,7 @@ import SensorDataCard from '@/components/ai/SensorDataCard';
 import AIPredictionPanel from '@/components/ai/AIPredictionPanel';
 import FaultRiskIndicator from '@/components/ai/FaultRiskIndicator';
 import PredictionHistory from '@/components/ai/PredictionHistory';
+import FeatureImportancePanel from '@/components/ai/FeatureImportancePanel';
 
 /**
  * AI Intelligence page — composes separated components:
@@ -69,7 +70,7 @@ export default function AIIntelligence() {
             }`}
           >
             <Send className="w-4 h-4" />
-            {loading ? 'Analyzing...' : 'Run Prediction'}
+            {loading ? 'Analyzing...' : 'Send Data'}
           </button>
           <div className="flex items-center gap-2">
             <Cpu className="w-4 h-4 text-success animate-neon-pulse" />
@@ -88,6 +89,9 @@ export default function AIIntelligence() {
         <AIPredictionPanel prediction={currentPrediction} />
         <FaultRiskIndicator prediction={currentPrediction} />
       </div>
+
+      {/* Feature Importance Insight */}
+      <FeatureImportancePanel prediction={currentPrediction} />
 
       {/* Prediction History */}
       <PredictionHistory history={history} onClear={clearHistory} />

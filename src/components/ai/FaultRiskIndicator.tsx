@@ -15,6 +15,9 @@ export default function FaultRiskIndicator({ prediction }: FaultRiskIndicatorPro
   const gaugeColor = prediction
     ? prediction.probabilities.danger > 0.5 ? 'red' : prediction.probabilities.danger > 0.2 ? 'warning' : 'success'
     : 'neon';
+  const tier = prediction?.riskTier ?? 'Low';
+  const tierColor = tier === 'High' ? 'text-destructive' : tier === 'Medium' ? 'text-warning' : 'text-success';
+  const tierBorder = tier === 'High' ? 'border-destructive/40 bg-destructive/10' : tier === 'Medium' ? 'border-warning/40 bg-warning/10' : 'border-success/40 bg-success/10';
 
   return (
     <div className="space-y-5">
@@ -28,6 +31,10 @@ export default function FaultRiskIndicator({ prediction }: FaultRiskIndicatorPro
           color={gaugeColor}
           size={200}
         />
+        <div className={`mt-2 px-5 py-2 rounded-md border-2 ${tierBorder}`}>
+          <span className="text-xs font-display uppercase tracking-wider text-muted-foreground block">Risk Level</span>
+          <span className={`font-display text-2xl font-bold ${tierColor}`}>{tier.toUpperCase()}</span>
+        </div>
       </div>
 
       {/* Model Info */}
