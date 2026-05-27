@@ -10,6 +10,7 @@ const defaults: SensorData = {
   throttlePosition: 30,
   fuelPressure: 3.5,
   intakeManifoldPressure: 1.0,
+  airIntakeTemp: 30,
   tireWear: 25,
   battery: 88,
   engineLoad: 45,
@@ -41,15 +42,12 @@ export interface SensorFieldMeta {
 }
 
 export const sensorFields: SensorFieldMeta[] = [
-  { key: 'rpm',                    label: 'RPM',                    unit: 'rpm',  min: 0,    max: 9000, step: 100 },
-  { key: 'speed',                  label: 'Speed',                  unit: 'km/h', min: 0,    max: 350,  step: 5 },
-  { key: 'engineTemperature',      label: 'Engine Temp',            unit: '°C',   min: 0,    max: 150,  step: 1 },
-  { key: 'maf',                    label: 'MAF',                    unit: 'g/s',  min: 0,    max: 200,  step: 1 },
-  { key: 'throttlePosition',      label: 'Throttle Position',      unit: '%',    min: 0,    max: 100,  step: 1 },
-  { key: 'fuelPressure',          label: 'Fuel Pressure',          unit: 'bar',  min: 0,    max: 10,   step: 0.1 },
-  { key: 'intakeManifoldPressure', label: 'Intake Manifold Press.', unit: 'bar',  min: 0,    max: 3,    step: 0.1 },
-  { key: 'tireWear',              label: 'Tire Wear',              unit: '%',    min: 0,    max: 100,  step: 1 },
-  { key: 'battery',               label: 'Battery',                unit: '%',    min: 0,    max: 100,  step: 1 },
-  { key: 'engineLoad',            label: 'Engine Load',            unit: '%',    min: 0,    max: 100,  step: 1 },
-  { key: 'aggressiveness',        label: 'Aggressiveness',         unit: '%',    min: 0,    max: 100,  step: 1 },
+  { key: 'rpm',                    label: 'Engine RPM',              unit: 'rpm',  min: 0, max: 9000, step: 100 },
+  { key: 'speed',                  label: 'Vehicle Speed',           unit: 'km/h', min: 0, max: 350,  step: 5 },
+  { key: 'engineTemperature',      label: 'Coolant Temp',            unit: '°C',   min: 0, max: 150,  step: 1 },
+  { key: 'maf',                    label: 'MAF',                     unit: 'g/s',  min: 0, max: 200,  step: 1 },
+  { key: 'throttlePosition',       label: 'Throttle Position',       unit: '%',    min: 0, max: 100,  step: 1 },
+  { key: 'fuelPressure',           label: 'Fuel Pressure',           unit: 'bar',  min: 0, max: 10,   step: 0.1 },
+  { key: 'intakeManifoldPressure', label: 'Intake Manifold Press.',  unit: 'bar',  min: 0, max: 3,    step: 0.1 },
+  { key: 'airIntakeTemp',          label: 'Air Intake Temp',         unit: '°C',   min: -20, max: 100, step: 1 },
 ];
