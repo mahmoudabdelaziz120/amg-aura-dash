@@ -70,7 +70,7 @@ export default function AIIntelligence() {
             }`}
           >
             <Send className="w-4 h-4" />
-            {loading ? 'Analyzing...' : 'Run Prediction'}
+            {loading ? 'Analyzing...' : 'Send Data'}
           </button>
           <div className="flex items-center gap-2">
             <Cpu className="w-4 h-4 text-success animate-neon-pulse" />
