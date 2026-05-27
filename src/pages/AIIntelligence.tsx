@@ -8,6 +8,7 @@ import SensorDataCard from '@/components/ai/SensorDataCard';
 import AIPredictionPanel from '@/components/ai/AIPredictionPanel';
 import FaultRiskIndicator from '@/components/ai/FaultRiskIndicator';
 import PredictionHistory from '@/components/ai/PredictionHistory';
+import FeatureImportancePanel from '@/components/ai/FeatureImportancePanel';
 
 /**
  * AI Intelligence page — composes separated components:
@@ -88,6 +89,9 @@ export default function AIIntelligence() {
         <AIPredictionPanel prediction={currentPrediction} />
         <FaultRiskIndicator prediction={currentPrediction} />
       </div>
+
+      {/* Feature Importance Insight */}
+      <FeatureImportancePanel prediction={currentPrediction} />
 
       {/* Prediction History */}
       <PredictionHistory history={history} onClear={clearHistory} />
