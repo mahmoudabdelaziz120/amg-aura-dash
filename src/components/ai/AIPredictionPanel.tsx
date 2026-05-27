@@ -53,6 +53,22 @@ export default function AIPredictionPanel({ prediction }: AIPredictionPanelProps
               </span>
             </div>
 
+            {/* Confidence Score */}
+            <div className="p-4 rounded-md border border-border bg-secondary/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-display uppercase tracking-wider text-muted-foreground">Confidence Score</span>
+                <span className={`text-2xl font-display font-bold ${risk.color}`}>{prediction.confidence}%</span>
+              </div>
+              <div className="h-2 bg-secondary/30 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${prediction.confidence}%` }}
+                  transition={{ duration: 0.6 }}
+                  className={`h-full ${prediction.riskLevel === 'Danger' ? 'bg-destructive' : prediction.riskLevel === 'Warning' ? 'bg-warning' : 'bg-success'}`}
+                />
+              </div>
+            </div>
+
             {/* Fault Description */}
             <div className="p-4 rounded-md border border-border bg-secondary/10">
               <span className="text-xs font-display uppercase tracking-wider text-muted-foreground block mb-1">Fault Description</span>
