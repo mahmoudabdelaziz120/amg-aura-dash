@@ -1,20 +1,18 @@
-import { Settings, ArrowUp, ArrowDown, ArrowRight } from 'lucide-react';
+import { Settings, ArrowUp, ArrowDown, ArrowRight, Radio } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
 import type { SensorData } from '@/hooks/useSensorData';
 import { sensorFields } from '@/utils/sensorUtils';
 
 interface SensorDataCardProps {
   sensorData: SensorData;
-  onUpdate: (key: string, value: number) => void;
 }
 
 /**
- * Card 1 — Sensor Data
- * Editable grid of all sensor values. Pure display + input component,
- * delegates state changes to parent via onUpdate callback.
+ * Card 1 — Sensor Data (Live, Read-Only)
+ * Auto-syncs from the shared dashboard sensor stream. Values update
+ * automatically; no manual input required.
  */
-export default function SensorDataCard({ sensorData, onUpdate }: SensorDataCardProps) {
+export default function SensorDataCard({ sensorData }: SensorDataCardProps) {
   const prevRef = useRef<SensorData>(sensorData);
   const [trends, setTrends] = useState<Record<string, 'up' | 'down' | 'flat'>>({});
 
@@ -31,9 +29,14 @@ export default function SensorDataCard({ sensorData, onUpdate }: SensorDataCardP
 
   return (
     <div className="amg-panel space-y-4">
-      <h3 className="font-display text-sm uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-        <Settings className="w-4 h-4" /> Sensor Data (8 ML Inputs)
-      </h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-display text-sm uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+          <Settings className="w-4 h-4" /> Sensor Data (Live · 8 ML Inputs)
+        </h3>
+        <span className="flex items-center gap-1.5 text-xs font-display uppercase tracking-wider text-success">
+          <Radio className="w-3 h-3 animate-pulse" /> Auto-Sync
+        </span>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {sensorFields.map((field) => {
           const trend = trends[field.key] ?? 'flat';
@@ -47,16 +50,12 @@ export default function SensorDataCard({ sensorData, onUpdate }: SensorDataCardP
               </label>
               <TrendIcon className={`w-3 h-3 ${trendColor}`} />
             </div>
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                value={sensorData[field.key]}
-                min={field.min}
-                max={field.max}
-                step={field.step}
-                onChange={(e) => onUpdate(field.key, parseFloat(e.target.value) || 0)}
-                className="h-8 text-base font-display bg-background/50 border-border/50 text-foreground [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-display font-bold text-primary tabular-nums">
+                {typeof sensorData[field.key] === 'number'
+                  ? Number(sensorData[field.key]).toLocaleString(undefined, { maximumFractionDigits: 2 })
+                  : '—'}
+              </span>
               <span className="text-xs text-muted-foreground font-body whitespace-nowrap">{field.unit}</span>
             </div>
           </div>

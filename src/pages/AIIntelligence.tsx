@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { Brain, Cpu } from 'lucide-react';
 import { useSensorData } from '@/hooks/useSensorData';
 import { usePredictionHistory } from '@/hooks/usePredictionHistory';
@@ -21,20 +21,40 @@ import FeatureImportancePanel from '@/components/ai/FeatureImportancePanel';
  * getSensorSnapshot (via hook) → fetchPrediction(/Car_Info) → display result
  */
 export default function AIIntelligence() {
-  const { sensorData, updateSensor } = useSensorData();
+  const { sensorData } = useSensorData();
   const { history, addEntry, clearHistory } = usePredictionHistory();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [currentPrediction, setCurrentPrediction] = useState<PredictionResult | null>(null);
 
+  // Derive the 8 ML inputs automatically from shared dashboard sensor data
+  const derivedSensorData = useMemo(() => {
+    const speed = sensorData.speed;
+    const engineLoad = sensorData.engineLoad;
+    const aggressiveness = sensorData.aggressiveness;
+    const engineTemperature = sensorData.engineTemperature;
+    const rpm = Math.min(9000, Math.round(speed * 38 + engineLoad * 20));
+    return {
+      ...sensorData,
+      rpm,
+      speed,
+      engineTemperature,
+      maf: Math.round(Math.max(2, engineLoad * 1.2 + rpm * 0.005)),
+      throttlePosition: Math.round(aggressiveness),
+      fuelPressure: +(Math.max(1.5, 3.8 - engineLoad * 0.015)).toFixed(2),
+      intakeManifoldPressure: +((engineLoad / 100) * 2).toFixed(2),
+      airIntakeTemp: Math.round(25 + engineTemperature * 0.15),
+    };
+  }, [sensorData]);
+
   const handlePredict = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await fetchPrediction(sensorData);
+      const result = await fetchPrediction(derivedSensorData);
       setCurrentPrediction(result);
       const entry: PredictionHistoryEntry = {
         id: crypto.randomUUID(),
-        sensorSnapshot: { ...sensorData },
+        sensorSnapshot: { ...derivedSensorData },
         result,
       };
       addEntry(entry);
@@ -43,7 +63,7 @@ export default function AIIntelligence() {
     } finally {
       setLoading(false);
     }
-  }, [sensorData, addEntry, toast]);
+  }, [derivedSensorData, addEntry, toast]);
 
   // Auto-scan: run prediction whenever sensor data changes (debounced)
   const debounceRef = useRef<number | null>(null);
@@ -55,7 +75,7 @@ export default function AIIntelligence() {
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
-  }, [sensorData, handlePredict]);
+  }, [derivedSensorData, handlePredict]);
 
   return (
     <div className="p-4 lg:p-6 space-y-5">
@@ -78,8 +98,8 @@ export default function AIIntelligence() {
         </div>
       </div>
 
-      {/* Card 1 — Sensor Data (editable inputs) */}
-      <SensorDataCard sensorData={sensorData} onUpdate={updateSensor} />
+      {/* Card 1 — Sensor Data (auto-derived from dashboard, read-only) */}
+      <SensorDataCard sensorData={derivedSensorData} />
 
       {/* Cards 2 & 3 — Prediction + Risk Gauge */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
