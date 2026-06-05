@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Brain, Cpu, Send } from 'lucide-react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { Brain, Cpu } from 'lucide-react';
 import { useSensorData } from '@/hooks/useSensorData';
 import { usePredictionHistory } from '@/hooks/usePredictionHistory';
 import { fetchPrediction, type PredictionResult, type PredictionHistoryEntry } from '@/services/predictionApi';
@@ -38,13 +38,24 @@ export default function AIIntelligence() {
         result,
       };
       addEntry(entry);
-      toast({ title: 'Prediction Complete', description: `Risk: ${result.riskLevel} — ${result.faultCode}` });
     } catch {
       toast({ title: 'Prediction Failed', description: 'Could not reach the model endpoint.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
   }, [sensorData, addEntry, toast]);
+
+  // Auto-scan: run prediction whenever sensor data changes (debounced)
+  const debounceRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(() => {
+      handlePredict();
+    }, 400);
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, [sensorData, handlePredict]);
 
   return (
     <div className="p-4 lg:p-6 space-y-5">
@@ -59,25 +70,11 @@ export default function AIIntelligence() {
             Sensor Data → ML Model → Fault Prediction
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handlePredict}
-            disabled={loading}
-            className={`flex items-center gap-2 px-5 py-3 rounded-md font-display text-sm uppercase tracking-wider transition-all duration-300 border ${
-              loading
-                ? 'bg-muted/20 border-muted/30 text-muted-foreground cursor-wait'
-                : 'bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 glow-neon'
-            }`}
-          >
-            <Send className="w-4 h-4" />
-            {loading ? 'Analyzing...' : 'Send Data'}
-          </button>
-          <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-success animate-neon-pulse" />
-            <span className="text-xs font-display uppercase tracking-wider text-success">
-              {loading ? 'Processing...' : 'Model Ready'}
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <Cpu className={`w-4 h-4 ${loading ? 'text-warning' : 'text-success'} animate-neon-pulse`} />
+          <span className={`text-xs font-display uppercase tracking-wider ${loading ? 'text-warning' : 'text-success'}`}>
+            {loading ? 'Auto-Scanning...' : 'Live Auto-Scan'}
+          </span>
         </div>
       </div>
 
