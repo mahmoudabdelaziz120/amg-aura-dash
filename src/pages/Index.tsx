@@ -13,12 +13,10 @@ import AVDCComparison from '@/components/AVDCComparison';
 import CorneringDynamics from '@/components/CorneringDynamics';
 import TrackMap from '@/components/TrackMap';
 import { useSensorData, sendSensorData } from '@/hooks/useSensorData';
-import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [mode, setMode] = useState<'normal' | 'racing'>('normal');
   const { sensorData, updateSensor } = useSensorData();
-  const { toast } = useToast();
   const [autoSyncing, setAutoSyncing] = useState(false);
 
   // Map sensorData to the params shape used by existing components
