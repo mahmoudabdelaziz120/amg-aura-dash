@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
-  Thermometer, Battery, Disc, Fuel, Activity, Shield, Send
+  Thermometer, Battery, Disc, Fuel, Activity, Shield, Radio
 } from 'lucide-react';
 import VehicleImage from '@/components/VehicleImage';
 import CircularGauge from '@/components/CircularGauge';
@@ -19,6 +19,7 @@ const Index = () => {
   const [mode, setMode] = useState<'normal' | 'racing'>('normal');
   const { sensorData, updateSensor } = useSensorData();
   const { toast } = useToast();
+  const [autoSyncing, setAutoSyncing] = useState(false);
 
   // Map sensorData to the params shape used by existing components
   const params = useMemo(() => ({
@@ -36,14 +37,24 @@ const Index = () => {
     updateSensor(keyMap[id] || id, value);
   }, [updateSensor]);
 
-  const handleSendData = useCallback(async () => {
-    try {
-      await sendSensorData(sensorData);
-      toast({ title: 'Data sent', description: 'Sensor data sent to /Car_Info' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to send sensor data', variant: 'destructive' });
-    }
-  }, [sensorData, toast]);
+  // Auto-scan: send sensor data to /Car_Info on every change (debounced)
+  const debounceRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(async () => {
+      setAutoSyncing(true);
+      try {
+        await sendSensorData(sensorData);
+      } catch {
+        // silent — auto-sync should not spam toasts
+      } finally {
+        setAutoSyncing(false);
+      }
+    }, 500);
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+  }, [sensorData]);
 
   const healthScore = useMemo(() => {
     const tireHealth = 100 - params.tireWear;
@@ -93,12 +104,10 @@ const Index = () => {
           Main Dashboard
         </h2>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleSendData}
-            className="flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border bg-accent/10 border-accent/30 text-accent hover:bg-accent/20"
-          >
-            <Send className="w-3 h-3" /> Send Data
-          </button>
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-md font-display text-xs uppercase tracking-wider border bg-success/10 border-success/30 text-success">
+            <Radio className={`w-3 h-3 ${autoSyncing ? 'animate-spin' : 'animate-pulse'}`} />
+            {autoSyncing ? 'Syncing...' : 'Auto-Scan Live'}
+          </div>
           <button
             onClick={() => setMode(m => m === 'normal' ? 'racing' : 'normal')}
             className={`flex items-center gap-2 px-4 py-2 rounded-md font-display text-xs uppercase tracking-wider transition-all duration-300 border ${
